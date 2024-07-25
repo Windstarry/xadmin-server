@@ -32,7 +32,7 @@ DB_ENGINE = 'django.db.backends.sqlite3'
 # 缓存配置
 REDIS_HOST = "redis"
 REDIS_PORT = 6379
-REDIS_PASSWORD = "nineven"
+REDIS_PASSWORD = ""
 
 # 需要将创建的应用写到里面
 XADMIN_APPS = []
