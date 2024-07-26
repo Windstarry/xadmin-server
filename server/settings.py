@@ -15,32 +15,28 @@ from pathlib import Path
 
 from celery.schedules import crontab
 
-from dotenv import load_dotenv
-
-# 使用默认的.env文件名。也可以指定不同的文件名。
-load_dotenv()
-
-# try:
-#     from config import *
-# except ImportError:
-#     print("未发现自定义配置，使用默认配置")
-    
+try:
+    from config import *
+except ImportError:
+    print("未发现自定义配置，使用默认配置")
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
-# 开启或关闭调试模式
-DEBUG = os.getenv('DEBUG', False)
-SECRET_KEY = os.getenv('SECRET_KEY', 'default')
+# SECURITY WARNING: keep the secret key used in production secret!
+SECRET_KEY = 'django-insecure-mlq6(#a^2vk!1=7=xhp#$i=o5d%namfs=+b26$m#sh_2rco7j^'
+
+# SECURITY WARNING: don't run with debug turned on in production!
+DEBUG = locals().get("DEBUG", False)
 
 # 如果前端是代理，则可以通过该配置，在系统构建url的时候，获取正确的 scheme
 # 需要在 前端加入该配置  proxy_set_header X-Forwarded-Proto https;
 # https://docs.djangoproject.com/zh-hans/4.2/ref/settings/#std-setting-SECURE_PROXY_SSL_HEADER
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
-ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", ["*"])
+ALLOWED_HOSTS = locals().get("ALLOWED_HOSTS", ["*"])
 
 # Application definition
 
@@ -65,7 +61,7 @@ INSTALLED_APPS = [
     'django_celery_beat',
     'imagekit',
     'drf_yasg',
-    *os.getenv("XADMIN_APPS", [])
+    *locals().get("XADMIN_APPS", [])
 ]
 
 MIDDLEWARE = [
@@ -107,9 +103,9 @@ ASGI_APPLICATION = "server.asgi.application"
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 # Redis 配置
-REDIS_HOST = os.getenv("REDIS_HOST", "redis")
-REDIS_PORT = os.getenv("REDIS_PORT", 6379)
-REDIS_PASSWORD = os.getenv("REDIS_PASSWORD", "")
+REDIS_HOST = locals().get("REDIS_HOST", "redis")
+REDIS_PORT = locals().get("REDIS_PORT", 6379)
+REDIS_PASSWORD = locals().get("REDIS_PASSWORD", "nineven")
 
 DEFAULT_CACHE_ID = 1
 CHANNEL_LAYERS_CACHE_ID = 2
@@ -136,17 +132,17 @@ CACHES = {
 # python manage.py migrate
 DATABASES = {
     'default': {
-        'ENGINE': os.getenv('DB_ENGINE', 'django.db.backends.sqlite3'),
-        'NAME': os.getenv('DB_DATABASE', BASE_DIR / "db.sqlite3"),
-        'HOST': os.getenv('DB_HOST', 'mariadb'),
-        'PORT': os.getenv('DB_PORT', 3306),
-        'USER': os.getenv('DB_USER', 'server'),
-        'PASSWORD': os.getenv('DB_PASSWORD', 'KGzKjZpWBp4R4RSa'),
+        'ENGINE': locals().get('DB_ENGINE', 'django.db.backends.sqlite3'),
+        'NAME': locals().get('DB_DATABASE', BASE_DIR / "db.sqlite3"),
+        'HOST': locals().get('DB_HOST', 'mariadb'),
+        'PORT': locals().get('DB_PORT', 3306),
+        'USER': locals().get('DB_USER', 'server'),
+        'PASSWORD': locals().get('DB_PASSWORD', 'KGzKjZpWBp4R4RSa'),
         'CONN_MAX_AGE': 600,
         # 设置MySQL的驱动
         # 'OPTIONS': {'init_command': 'SET storage_engine=INNODB'},
         # 'OPTIONS': {'init_command': 'SET sql_mode="STRICT_TRANS_TABLES"', 'charset': 'utf8mb4'},
-        'OPTIONS': os.getenv('OPTIONS', {}),
+        'OPTIONS': locals().get('OPTIONS', {}),
     }
 }
 # https://docs.djangoproject.com/zh-hans/5.0/topics/db/multi-db/#automatic-database-routing
@@ -264,7 +260,7 @@ REST_FRAMEWORK = {
         'download2': '100/h',
         'register': '50/d',
         'login': '50/h',
-        **os.getenv('DEFAULT_THROTTLE_RATES', {})
+        **locals().get('DEFAULT_THROTTLE_RATES', {})
     },
     'DEFAULT_PAGINATION_CLASS': 'common.core.pagination.PageNumber',
     'DEFAULT_PERMISSION_CLASSES': [
@@ -473,7 +469,7 @@ CACHE_KEY_TEMPLATE = {
     'upload_part_info_key': 'upload_part_info',
     'black_access_token_key': 'black_access_token',
     'common_resource_ids_key': 'common_resource_ids',
-    **os.getenv('CACHE_KEY_TEMPLATE', {})
+    **locals().get('CACHE_KEY_TEMPLATE', {})
 }
 
 # Celery Configuration Options
@@ -537,7 +533,7 @@ CELERY_BEAT_SCHEDULE = {
         'schedule': crontab(hour='2', minute='32'),
         'args': ()
     },
-    **os.getenv('CELERY_BEAT_SCHEDULE', {})
+    **locals().get('CELERY_BEAT_SCHEDULE', {})
 }
 
 # 字母验证码
@@ -557,7 +553,7 @@ CAPTCHA_NOISE_FUNCTIONS = ('captcha.helpers.noise_null',
 APPEND_SLASH = False
 
 HTTP_BIND_HOST = '0.0.0.0'
-HTTP_LISTEN_PORT = os.getenv('HTTP_LISTEN_PORT', 8896)
+HTTP_LISTEN_PORT = locals().get('HTTP_LISTEN_PORT', 8896)
 # celery flower 任务监控配置
 CELERY_FLOWER_PORT = 5566
 CELERY_FLOWER_HOST = '127.0.0.1'
